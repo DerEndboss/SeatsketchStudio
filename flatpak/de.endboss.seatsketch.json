@@ -1,0 +1,37 @@
+{
+  "app-id": "de.endboss.seatsketch",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "25.08",
+  "sdk": "org.freedesktop.Sdk",
+  "base": "org.electronjs.Electron2.BaseApp",
+  "base-version": "25.08",
+  "command": "seatsketch-studio",
+  "branch": "stable",
+  "separate-locales": false,
+  "build-options": { "no-debuginfo": true, "strip": false },
+  "finish-args": [
+    "--socket=wayland",
+    "--socket=fallback-x11",
+    "--share=ipc",
+    "--device=dri"
+  ],
+  "modules": [
+    {
+      "name": "seatsketch-studio",
+      "buildsystem": "simple",
+      "build-commands": [
+        "mkdir -p /app/lib/seatsketch-studio",
+        "cp -a desktop/. /app/lib/seatsketch-studio/",
+        "install -Dm755 seatsketch-studio /app/bin/seatsketch-studio",
+        "install -Dm644 de.endboss.seatsketch.desktop /app/share/applications/de.endboss.seatsketch.desktop",
+        "install -Dm644 de.endboss.seatsketch.metainfo.xml /app/share/metainfo/de.endboss.seatsketch.metainfo.xml",
+        "install -Dm644 de.endboss.seatsketch.xml /app/share/mime/packages/de.endboss.seatsketch.xml",
+        "install -Dm644 icon.png /app/share/icons/hicolor/512x512/apps/de.endboss.seatsketch.png"
+      ],
+      "sources": [
+        { "type": "dir", "path": "../.build/desktop/linux-unpacked", "dest": "desktop" },
+        { "type": "dir", "path": "../build/flatpak" }
+      ]
+    }
+  ]
+}

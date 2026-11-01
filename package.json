@@ -1,0 +1,112 @@
+{
+  "name": "seatsketch-studio",
+  "private": true,
+  "version": "0.1.2",
+  "description": "Sitzpläne skizzieren – Tische malen, Stühle verteilen, Gäste setzen.",
+  "author": "PixelCursor",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist-electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.node.json --noEmit && tsc -p electron/tsconfig.json --noEmit",
+    "build": "npm run typecheck && vite build && node scripts/third-party-notices.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "electron:compile": "tsc -p electron/tsconfig.json",
+    "electron:dev": "npm run electron:compile && node scripts/electron-dev.mjs",
+    "dist": "node scripts/build-desktop.mjs",
+    "dist:linux": "node scripts/build-desktop.mjs linux",
+    "dist:win": "node scripts/build-desktop.mjs win",
+    "dist:flatpak": "node scripts/build-flatpak.mjs",
+    "check": "npm run typecheck && npm test && npm run test:e2e",
+    "test:desktop": "playwright test --config playwright.desktop.config.ts",
+    "verify:release": "node scripts/verify-release.mjs",
+    "clean": "node scripts/clean.mjs",
+    "release:flatpak": "npm run check && npm run dist:flatpak && npm run test:desktop && npm run verify:release",
+    "lint": "npm run typecheck",
+    "test:run": "vitest run",
+    "release:all": "npm run check && npm run dist && npm run dist:flatpak && npm run test:desktop && npm run verify:release"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@playwright/test": "^1.64.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "electron": "^45.2.1",
+    "electron-builder": "^26.18.0",
+    "jsdom": "^30.1.3",
+    "jspdf": "^4.2.1",
+    "konva": "^10.9.1",
+    "lucide-react": "^1.66.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-konva": "^19.3.2",
+    "svg2pdf.js": "^2.9.0",
+    "tailwindcss": "^4.3.3",
+    "three": "^0.187.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5",
+    "zustand": "^5.0.16"
+  },
+  "build": {
+    "appId": "de.endboss.seatsketch",
+    "productName": "Seatsketch Studio",
+    "executableName": "seatsketch-studio",
+    "copyright": "© 2026 PixelCursor",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "build/icon.png",
+      "package.json",
+      "LICENSE"
+    ],
+    "asar": true,
+    "fileAssociations": [
+      {
+        "ext": "seatsketch",
+        "name": "Seatsketch-Projekt",
+        "description": "Seatsketch Studio Sitzplan",
+        "mimeType": "application/x-seatsketch",
+        "role": "Editor"
+      }
+    ],
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Office",
+      "icon": "build/icon.png",
+      "synopsis": "Sitzpläne skizzieren",
+      "artifactName": "Seatsketch-Studio-${version}-${arch}.AppImage",
+      "syncDesktopName": true,
+      "desktop": {
+        "entry": {
+          "StartupWMClass": "de.endboss.seatsketch"
+        }
+      }
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "Seatsketch-Studio-${version}-portable.exe"
+    },
+    "portable": {
+      "artifactName": "Seatsketch-Studio-${version}-portable.exe"
+    }
+  },
+  "desktopName": "de.endboss.seatsketch.desktop"
+}

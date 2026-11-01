@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://seatsketch.pixel-cursor.com/sitemap.xml

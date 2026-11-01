@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Seatsketch Studio
+Comment=Sketch seating plans, arrange tables and seat guests
+Comment[de]=Sitzpläne zeichnen, Tische anordnen und Gäste setzen
+Exec=seatsketch-studio %f
+Icon=de.endboss.seatsketch
+Terminal=false
+Categories=Office;
+MimeType=application/x-seatsketch;
+StartupNotify=true
+StartupWMClass=de.endboss.seatsketch
