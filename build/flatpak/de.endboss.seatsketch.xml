@@ -2,7 +2,6 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/x-seatsketch">
     <comment>Seatsketch seating plan</comment>
-    <comment xml:lang="de">Seatsketch-Sitzplan</comment>
     <glob pattern="*.seatsketch"/>
   </mime-type>
 </mime-info>
