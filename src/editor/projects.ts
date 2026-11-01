@@ -122,14 +122,14 @@ export function initPlans(): boolean {
 export function activatePlan(id: string): void {
   const { activeId, plans } = usePlans.getState();
   if (id === activeId || !plans.some((p) => p.id === id)) {
-    useUi.getState().setWelcome(false);
+    useUi.getState().setTemplatesOpen(false);
     return;
   }
   stashActive();
   usePlans.setState({ activeId: id });
   persistIndex();
   loadIntoEditor(id);
-  useUi.getState().setWelcome(false);
+  useUi.getState().setTemplatesOpen(false);
 }
 
 /** Create a new plan as a tab to the right of the active one and open it. */
@@ -153,7 +153,7 @@ export function createPlan(doc: SeatDocument, file?: { name: string | null; ref:
   useInteraction.getState().reset();
   useEditor.getState().load(doc, { saved: !!file?.name });
   useFile.getState().setFile(meta.fileName, file?.ref ?? null);
-  useUi.getState().setWelcome(false);
+  useUi.getState().setTemplatesOpen(false);
   useUi.getState().setPreview(false);
   requestAnimationFrame(() => fitView(doc));
   return id;
@@ -181,7 +181,7 @@ export function deletePlan(id: string): void {
     activeController?.cancel();
     useEditor.getState().load(createEmptyDocument(tr('name.untitled')));
     useFile.getState().setFile(null, null);
-    useUi.getState().setWelcome(true);
+    createPlan(createEmptyDocument());
   }
 }
 

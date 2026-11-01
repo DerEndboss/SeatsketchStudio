@@ -7,10 +7,11 @@ import { getLookup } from '../state/lookup';
 import { computeWarnings } from '../geometry/collisionDetection';
 import { installKeyboard } from '../editor/interactions/keyboard';
 import { openDroppedFile, openFromText, openPendingNativeFile, refreshRecent } from '../editor/commands';
-import { initPlans, saveActiveNow, usePlans } from '../editor/projects';
+import { createPlan, initPlans, saveActiveNow, usePlans } from '../editor/projects';
 import { platform } from '../platforms';
 import { themeInfo } from '../styles/themes';
 import { useI18n } from '../i18n';
+import { createEmptyDocument } from '../editor/objects/factory';
 import { useKeymap } from '../editor/keymap';
 
 export function useThemeClass(): void {
@@ -136,7 +137,7 @@ export function useBoot(): void {
     if (booted) return;
     booted = true;
     const hasPlans = initPlans();
-    useUi.getState().setWelcome(!hasPlans);
+    if (!hasPlans) createPlan(createEmptyDocument());
     const native = window.seatsketchNative;
     if (native) {
       void native

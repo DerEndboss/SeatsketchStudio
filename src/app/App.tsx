@@ -10,7 +10,7 @@ import { CanvasContextMenu, GuestPopover, PreviewBar, Toasts } from '../componen
 import { DistributeDialog } from '../components/dialogs/DistributeDialog';
 import { ExportDialog } from '../components/dialogs/ExportDialog';
 import { SettingsDialog } from '../components/dialogs/SettingsDialog';
-import { WelcomeDialog } from '../components/dialogs/WelcomeDialog';
+import { CanvasStart } from '../components/CanvasStart';
 import { ConfirmDialog } from '../components/dialogs/MiscDialogs';
 import { useT } from '../i18n';
 import { useAutosave, useBoot, useFileDrop, useKeyboard, useThemeClass, useWarnings, useWindowTitle } from './hooks';
@@ -34,6 +34,7 @@ export function App() {
         {!preview && <ToolBar />}
         <main className="relative min-w-0 flex-1 bg-canvas" aria-label={t('app.name')}>
           <EditorCanvas />
+          <CanvasStart />
           {!preview && <ToolHint />}
         </main>
         {!preview && <Inspector />}
@@ -46,7 +47,6 @@ export function App() {
       <DistributeDialog />
       <ExportDialog />
       <SettingsDialog />
-      <WelcomeDialog />
       <ConfirmDialog />
     </div>
   );

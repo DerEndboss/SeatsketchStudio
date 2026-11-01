@@ -205,9 +205,9 @@ const PALETTES: Record<ThemeId, Palette> = { beige: LIGHT, espresso: DARK, sage:
 export const paletteFor = (theme: ThemeId): Palette => PALETTES[theme];
 
 export const TONE_LABELS: Record<TableTone, string> = {
-  default: 'Weiß',
+  default: 'White',
   sand: 'Sand',
-  sage: 'Salbei',
+  sage: 'Sage',
   sky: 'Himmel',
   rose: 'Rosé',
   slate: 'Schiefer',

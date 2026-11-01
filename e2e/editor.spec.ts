@@ -28,11 +28,13 @@ async function counts(page: Page) {
 }
 
 async function createPlan(page: Page, template = 'conference', name?: string) {
+  await page.getByTestId('sidebar-templates').click();
   await page.getByTestId(`template-${template}`).click();
-  await page.getByTestId('welcome-next').click();
-  if (name) await page.getByTestId('welcome-name').fill(name);
-  await page.getByTestId('welcome-create').click();
-  await expect(page.getByTestId('welcome-dialog')).toHaveCount(0);
+  if (name) {
+    await page.getByTestId('project-name').fill(name);
+    await page.getByTestId('project-name').press('Enter');
+  }
+  await expect(page.getByTestId('template-library')).toHaveCount(0);
   await expect(page.getByTestId('stats')).toBeVisible();
 }
 
@@ -40,21 +42,55 @@ const errors = new WeakMap<Page, string[]>();
 test.beforeEach(async ({ page }) => {
   errors.set(page, []);
   page.on('pageerror', (error) => errors.get(page)?.push(error.message));
+  await page.addInitScript(() => localStorage.setItem('seatsketch:lang', 'de'));
   await page.goto('/');
-  await expect(page.getByTestId('welcome-dialog')).toBeVisible();
+  await expect(page.getByTestId('canvas-start')).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
 test.afterEach(async ({ page }) => {
   expect(errors.get(page)).toEqual([]);
 });
 
-test('Welcome: choose language and theme before the first plan', async ({ page }) => {
-  await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(0);
-  await page.getByRole('combobox', { name: 'Sprache' }).selectOption('en');
-  await expect(page.getByRole('dialog', { name: 'Welcome' })).toBeVisible();
+test('Direct English editor on a German system, with optional persistent themes', async ({ page }) => {
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(1);
+  await expect(page.getByTestId('project-name')).toHaveValue('Untitled plan');
+  await expect(page.locator('html')).toHaveClass(/theme-beige/);
   await page.getByRole('radio', { name: 'Espresso dark' }).click();
   await expect(page.locator('html')).toHaveClass(/theme-espresso/);
-  await page.getByRole('combobox', { name: 'Language' }).selectOption('de');
+  await page.reload();
+  await expect(page.locator('html')).toHaveClass(/theme-espresso/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByTestId('desktop-download')).toBeVisible();
+});
+
+test('Templates are optional and never replace a non-empty project', async ({ page }) => {
+  await createPlan(page, 'conference', 'Keep this plan');
+  await page.getByRole('button', { name: 'Templates', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByTestId('template-restaurant').click();
+  await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(2);
+  await page.keyboard.press('Control+Tab');
+  await expect(page.getByTestId('project-name')).toHaveValue('Keep this plan');
+  expect((await counts(page)).tables).toBeGreaterThan(0);
+});
+
+test('Drawing immediately and deleting the last plan keep a usable editor', async ({ page }) => {
+  await page.keyboard.press('a');
+  const box = (await page.getByTestId('canvas').boundingBox())!;
+  await page.mouse.click(box.x + 180, box.y + 150);
+  await expect(page.getByTestId('zone-name')).toBeVisible();
+  await page.getByTestId('zone-name').press('Enter');
+  const close = page.locator('[data-testid^="close-plan-"]').first();
+  await close.click();
+  await page.getByRole('button', { name: 'Delete for good', exact: true }).click();
+  await expect(page.getByTestId('canvas-start')).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByTestId('canvas-start')).toBeVisible();
+  await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(1);
 });
 
 test('Web download sits at the bottom left and leads to the ExportHub page', async ({ page }) => {
@@ -72,29 +108,29 @@ test('Web download sits at the bottom left and leads to the ExportHub page', asy
 });
 
 test('Tabs survive a reload; deleting needs a confirmation', async ({ page }) => {
-  await createPlan(page, 'conference', 'Besprechung A');
+  await createPlan(page, 'conference', 'Meeting A');
   await page.getByTestId('new-plan-tab').click();
-  await createPlan(page, 'blank', 'Leer');
+  await createPlan(page, 'blank', 'Empty');
   await expect(page.getByRole('tab')).toHaveCount(4);
   await page.waitForTimeout(650);
   await page.reload();
   await expect(page.getByTestId('welcome-dialog')).toHaveCount(0);
-  await expect(page.getByTestId('project-name')).toHaveValue('Leer');
+  await expect(page.getByTestId('project-name')).toHaveValue('Empty');
   await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(2);
   await page.keyboard.press('Control+Tab');
-  await expect(page.getByTestId('project-name')).toHaveValue('Besprechung A');
-  await page.getByRole('button', { name: 'Plan löschen: Leer', exact: true }).click();
-  await page.getByRole('button', { name: 'Abbrechen', exact: true }).click();
+  await expect(page.getByTestId('project-name')).toHaveValue('Meeting A');
+  await page.getByRole('button', { name: 'Delete plan: Empty', exact: true }).click();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   expect(await state(page, ({ plans }) => plans.getState().plans.length)).toBe(2);
-  await page.getByRole('button', { name: 'Plan löschen: Leer', exact: true }).click();
-  await page.getByRole('button', { name: 'Endgültig löschen', exact: true }).click();
+  await page.getByRole('button', { name: 'Delete plan: Empty', exact: true }).click();
+  await page.getByRole('button', { name: 'Delete for good', exact: true }).click();
   await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(1);
   await page.reload();
   await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(1);
 });
 
 test('Blank plan, place a table and type text without a global delete', async ({ page }) => {
-  await createPlan(page, 'blank', 'Mein Plan');
+  await createPlan(page, 'blank', 'My plan');
   expect(await counts(page)).toEqual({ tables: 0, chairs: 0, seated: 0, guests: 0 });
   await page.keyboard.press('t');
   await page.getByTestId('preset-rect').click();
@@ -120,7 +156,7 @@ test('Distribute chairs and undo completely', async ({ page }) => {
   await page.getByTestId('distribute-total').press('Enter');
   await page.getByTestId('distribute-max').fill('6');
   await page.getByTestId('distribute-max').press('Enter');
-  await expect(page.getByTestId('distribute-summary')).toContainText('30 von 30');
+  await expect(page.getByTestId('distribute-summary')).toContainText('30 of 30');
   await page.getByTestId('distribute-apply').click();
   expect((await counts(page)).chairs).toBe(30);
   await page.keyboard.press('Control+z');
@@ -135,15 +171,15 @@ test('Name areas, change kind and size, undo/redo and save permanently', async (
   await page.mouse.click(center.x, center.y);
   await expect(page.getByTestId('inspector-zone')).toBeVisible();
   await expect(page.getByTestId('zone-name')).toBeFocused();
-  await page.getByTestId('zone-name').fill('Tanzfläche & Bühne');
+  await page.getByTestId('zone-name').fill('Dance floor & stage');
   await page.getByTestId('zone-name').press('Enter');
-  await page.getByRole('radio', { name: 'Bühne', exact: true }).click();
+  await page.getByRole('radio', { name: 'Stage', exact: true }).click();
   await page.getByTestId('zone-width').fill('4,5');
   await page.getByTestId('zone-width').press('Enter');
   await page.getByTestId('zone-length').fill('3');
   await page.getByTestId('zone-length').press('Enter');
   const zone = () => state(page, ({ editor }) => editor.getState().doc.objects.find((o) => o.type === 'zone'));
-  expect(await zone()).toMatchObject({ name: 'Tanzfläche & Bühne', kind: 'stage', width: 4.5, height: 3 });
+  expect(await zone()).toMatchObject({ name: 'Dance floor & stage', kind: 'stage', width: 4.5, height: 3 });
   await page.keyboard.press('Control+z');
   expect(await zone()).toMatchObject({ height: 2 });
   await page.keyboard.press('Control+Shift+z');
@@ -152,16 +188,16 @@ test('Name areas, change kind and size, undo/redo and save permanently', async (
   await page.mouse.dblclick(center.x, center.y);
   await expect(page.getByTestId('zone-name')).toBeFocused();
   await page.getByTestId('zone-name').press('Enter');
-  await page.getByRole('radio', { name: 'Sperrfläche', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => Object.values(localStorage).some((v) => v.includes('Tanzfläche & Bühne') && v.includes('blocked')))).toBe(true);
+  await page.getByRole('radio', { name: 'No-go', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => Object.values(localStorage).some((v) => v.includes('Dance floor & stage') && v.includes('blocked')))).toBe(true);
   await page.reload();
   await expect(page.getByTestId('welcome-dialog')).toHaveCount(0);
-  expect(await zone()).toMatchObject({ name: 'Tanzfläche & Bühne', kind: 'blocked', width: 4.5, height: 3 });
+  expect(await zone()).toMatchObject({ name: 'Dance floor & stage', kind: 'blocked', width: 4.5, height: 3 });
   await page.evaluate(() => { delete (window as unknown as { showSaveFilePicker?: unknown }).showSaveFilePicker; });
   const download = page.waitForEvent('download');
   await page.keyboard.press('Control+s');
   const data = JSON.parse(readFileSync((await (await download).path())!, 'utf8'));
-  expect(data.objects.find((o: { type: string }) => o.type === 'zone')).toMatchObject({ name: 'Tanzfläche & Bühne', kind: 'blocked', width: 4.5, height: 3 });
+  expect(data.objects.find((o: { type: string }) => o.type === 'zone')).toMatchObject({ name: 'Dance floor & stage', kind: 'blocked', width: 4.5, height: 3 });
 });
 
 test('Locally restored file changes stay marked as unsaved', async ({ page }) => {
@@ -207,7 +243,7 @@ test('Dimension readout, Ctrl pan and individual chair size', async ({ page }) =
   expect(after.y).toBeGreaterThan(before.y + 30);
   await page.getByTestId('chair-preset-padded').click();
   expect(await state(page, ({ editor }) => editor.getState().doc.settings.chair)).toEqual({ width: 0.5, depth: 0.52 });
-  await page.getByRole('radio', { name: 'Zentimeter', exact: true }).click();
+  await page.getByRole('radio', { name: 'Centimetres', exact: true }).click();
   await page.getByTestId('chair-width').fill('55');
   await page.getByTestId('chair-width').press('Enter');
   expect(await state(page, ({ editor }) => editor.getState().doc.settings.chair.width)).toBe(0.55);
@@ -216,17 +252,17 @@ test('Dimension readout, Ctrl pan and individual chair size', async ({ page }) =
 test('Record hotkeys, resolve a conflict, disable and reset', async ({ page }) => {
   await createPlan(page);
   await page.getByTestId('open-settings').click();
-  await page.getByRole('button', { name: 'Tastenkürzel', exact: true }).click();
-  const row = page.getByText('Raster ein/aus', { exact: true }).locator('..');
+  await page.getByRole('button', { name: 'Shortcuts', exact: true }).click();
+  const row = page.getByText('Grid on/off', { exact: true }).locator('..');
   await row.locator('[data-key-capture]').first().click();
   await page.keyboard.press('Control+Shift+M');
   expect(await state(page, ({ keymap }) => keymap.getState().overrides.toggleGrid)).toEqual(['Mod+Shift+M']);
   expect(await state(page, ({ keymap }) => keymap.getState().overrides.toggleDims)).toBeUndefined();
-  await row.getByRole('button', { name: 'Kürzel deaktivieren', exact: true }).click();
+  await row.getByRole('button', { name: 'Disable shortcut', exact: true }).click();
   expect(await state(page, ({ keymap }) => keymap.getState().overrides.toggleGrid)).toEqual([]);
-  await row.getByRole('button', { name: 'Kürzel aktivieren', exact: true }).click();
+  await row.getByRole('button', { name: 'Enable shortcut', exact: true }).click();
   expect(await state(page, ({ keymap }) => keymap.getState().overrides.toggleGrid)).toBeUndefined();
-  await page.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
   await page.keyboard.press('Shift+g');
   expect(await state(page, ({ editor }) => editor.getState().doc.settings.showGrid)).toBe(false);
 });
@@ -240,14 +276,14 @@ test('F11 toggles borderless fullscreen', async ({ page }) => {
 });
 
 test('Saving produces a valid .seatsketch file', async ({ page }) => {
-  await createPlan(page, 'blank', 'Mein Plan');
+  await createPlan(page, 'blank', 'My plan');
   await page.evaluate(() => {
     delete (window as unknown as { showSaveFilePicker?: unknown }).showSaveFilePicker;
   });
   const download = page.waitForEvent('download');
   await page.keyboard.press('Control+s');
   const file = await download;
-  expect(file.suggestedFilename()).toBe('Mein Plan.seatsketch');
+  expect(file.suggestedFilename()).toBe('My plan.seatsketch');
   const data = JSON.parse(readFileSync((await file.path())!, 'utf8'));
   expect(data.schema).toBe('seatsketch-studio');
   expect(data.version).toBe(1);
@@ -268,7 +304,7 @@ test('PNG export with logo and a real 3D view', async ({ page }) => {
   await page.getByTestId('export-run').click();
   const file = await download;
   const data = readFileSync((await file.path())!);
-  expect(file.suggestedFilename()).toBe('Hochzeit & Feier.png');
+  expect(file.suggestedFilename()).toBe('Wedding & party.png');
   expect(data.subarray(1, 4).toString()).toBe('PNG');
   expect(data.readUInt32BE(16)).toBe(800);
   expect(data.readUInt32BE(20)).toBeGreaterThan(550);
@@ -291,7 +327,7 @@ test('PDF contains floor plan, 3D page and alphabetical guest list', async ({ pa
   await page.getByTestId('export-run').click();
   const file = await download;
   const data = readFileSync((await file.path())!);
-  expect(file.suggestedFilename()).toBe('Besprechung.pdf');
+  expect(file.suggestedFilename()).toBe('Meeting room.pdf');
   expect(data.subarray(0, 5).toString()).toBe('%PDF-');
   expect(data.toString('latin1').match(/\/Type \/Page\b/g)).toHaveLength(3);
   expect(data.length).toBeGreaterThan(50_000);

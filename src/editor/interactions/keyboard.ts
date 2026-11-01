@@ -63,13 +63,13 @@ export function installKeyboard(): () => void {
     if (e.key === 'Escape' && !e.ctrlKey && !e.metaKey && !e.altKey) {
       if (activeController?.cancel()) return;
       if (ui.contextMenu) return ui.setContextMenu(null);
-      if (ui.welcome && usePlans.getState().activeId) return ui.setWelcome(false);
+      if (ui.templatesOpen && usePlans.getState().activeId) return ui.setTemplatesOpen(false);
       if (useEditor.getState().selection.length) return cmd.clearSelection();
       if (ui.tool !== 'select') cmd.setTool('select');
       return;
     }
     if (e.key === 'Enter' && !command && activeController?.finishPolygon()) return;
-    if (e.key.startsWith('Arrow') && !e.ctrlKey && !e.metaKey && !e.altKey && useEditor.getState().selection.length && !ui.welcome) {
+    if (e.key.startsWith('Arrow') && !e.ctrlKey && !e.metaKey && !e.altKey && useEditor.getState().selection.length) {
       e.preventDefault();
       const s = useEditor.getState().doc.settings;
       const step = (s.snap ? s.snapStep : 0.01) * (e.shiftKey ? 10 : 1);

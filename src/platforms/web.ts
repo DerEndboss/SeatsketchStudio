@@ -3,7 +3,7 @@ import type { ExportRequest, OpenedFile, PlatformAdapter, SavedFile, FileRef } f
 
 const PROJECT_TYPES = [
   {
-    description: 'Seatsketch-Projekt',
+    description: 'Seatsketch project',
     accept: { 'application/json': [`.${FILE_EXTENSION}`] },
   },
 ];

@@ -58,7 +58,7 @@ interface UiState {
   settingsTab: SettingsTab;
   exportFormat: ExportFormat;
   /** Template gallery ("+" tab or first start) */
-  welcome: boolean;
+  templatesOpen: boolean;
   toolbarExpanded: boolean;
   toasts: Toast[];
   contextMenu: ContextMenuState | null;
@@ -79,7 +79,7 @@ interface UiState {
   openDialog: (d: DialogId | null) => void;
   openSettings: (tab?: SettingsTab) => void;
   openExport: (format?: ExportFormat) => void;
-  setWelcome: (open: boolean) => void;
+  setTemplatesOpen: (open: boolean) => void;
   setToolbarExpanded: (open: boolean) => void;
   toast: (text: string, tone?: Toast['tone']) => void;
   dismissToast: (id: number) => void;
@@ -114,7 +114,7 @@ function readTheme(): ThemeSetting {
   if (v === 'light') return 'beige';
   if (v === 'dark') return 'espresso';
   if (v === 'system' || v === 'beige' || v === 'espresso' || v === 'sage' || v === 'midnight') return v;
-  return 'system';
+  return 'beige';
 }
 
 function readSystemDark(): boolean {
@@ -142,7 +142,7 @@ export const useUi = create<UiState>()((set, get) => ({
   dialog: null,
   settingsTab: 'general',
   exportFormat: 'pdf',
-  welcome: false,
+  templatesOpen: false,
   toolbarExpanded: browser ? read(TOOLBAR_KEY) === 'open' : false,
   toasts: [],
   contextMenu: null,
@@ -151,7 +151,7 @@ export const useUi = create<UiState>()((set, get) => ({
   spaceDown: false,
   ctrlDown: false,
 
-  setTool: (tool) => set({ tool, contextMenu: null }),
+  setTool: (tool) => set({ tool, templatesOpen: false, contextMenu: null }),
   setTablePreset: (tablePreset) => set({ tablePreset, tool: 'table' }),
   setViewport: (viewport) => set({ viewport }),
   setStageSize: (width, height) => {
@@ -169,7 +169,7 @@ export const useUi = create<UiState>()((set, get) => ({
   openDialog: (dialog) => set({ dialog, contextMenu: null }),
   openSettings: (tab = 'general') => set({ dialog: 'settings', settingsTab: tab, contextMenu: null }),
   openExport: (format) => set({ dialog: 'export', exportFormat: format ?? get().exportFormat, contextMenu: null }),
-  setWelcome: (welcome) => set({ welcome, contextMenu: null, guestPopover: null }),
+  setTemplatesOpen: (templatesOpen) => set({ templatesOpen, panel: 'inspect', contextMenu: null, guestPopover: null }),
   setToolbarExpanded: (toolbarExpanded) => {
     write(TOOLBAR_KEY, toolbarExpanded ? 'open' : 'closed');
     set({ toolbarExpanded });

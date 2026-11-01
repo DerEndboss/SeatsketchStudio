@@ -20,8 +20,6 @@ interface SeatsketchNative {
   initialFile(): Promise<SeatsketchNativeFile | null>;
   /** Toggle borderless fullscreen */
   toggleFullscreen?(): Promise<boolean>;
-  /** Language for native dialogs */
-  setLanguage?(lang: string): void;
 }
 
 interface Window {

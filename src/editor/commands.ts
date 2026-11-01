@@ -29,6 +29,7 @@ import {
 } from './objects/docOps';
 import { addGuests, withObjects } from './objects/tableOps';
 import { guestNamesFromCsv } from '../persistence/csv';
+import { createEmptyDocument } from './objects/factory';
 import { activeController } from './interactions/controller';
 import { commandById } from './keymap';
 import { confirmDeletePlan, createPlan, cyclePlan, saveActiveNow, usePlans } from './projects';
@@ -302,7 +303,7 @@ export function renameDocument(name: string): void {
 
 /* ------------------------------------- Commands by ID (keyboard) ------------------------------------- */
 
-const hasPlan = () => !!usePlans.getState().activeId && !ui().welcome;
+const hasPlan = () => !!usePlans.getState().activeId;
 const GLOBAL = new Set(['newPlan', 'open', 'settings', 'shortcuts', 'fullscreen', 'toggleTheme', 'nextTab', 'prevTab']);
 
 /** Runs a command from the registry. Returns false if it does not apply right now. */
@@ -362,7 +363,7 @@ export function runCommand(id: string): boolean {
     case 'preview': u.setPreview(!u.preview); break;
     case 'fullscreen': toggleFullscreen(); break;
     case 'toggleTheme': toggleTheme(); break;
-    case 'newPlan': u.setWelcome(true); break;
+    case 'newPlan': createPlan(createEmptyDocument()); break;
     case 'open': void openProject(); break;
     case 'save': void saveProject(false); break;
     case 'saveAs': void saveProject(true); break;

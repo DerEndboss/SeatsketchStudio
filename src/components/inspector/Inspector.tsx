@@ -8,6 +8,7 @@ import { TableInspector } from './TableInspector';
 import { ChairInspector } from './ChairInspector';
 import { MultiInspector } from './MultiInspector';
 import { DocumentInspector } from './DocumentInspector';
+import { TemplateLibrary } from '../TemplateLibrary';
 import { GuestPanel } from './GuestPanel';
 import {
   ColumnInspector,
@@ -52,6 +53,7 @@ function SingleInspector({ o }: { o: SceneObject }) {
 export function Inspector() {
   const t = useT();
   const panel = useUi((s) => s.panel);
+  const templatesOpen = useUi((s) => s.templatesOpen);
   const setPanel = useUi((s) => s.setPanel);
   const doc = useEditor((s) => s.doc);
   const selection = useEditor((s) => s.selection);
@@ -86,7 +88,9 @@ export function Inspector() {
         <GuestPanel />
       ) : (
         <div className="scroll-thin min-h-0 flex-1 overflow-y-auto">
-          {objects.length === 0 ? (
+          {templatesOpen ? (
+            <TemplateLibrary />
+          ) : objects.length === 0 ? (
             <DocumentInspector />
           ) : objects.length === 1 ? (
             <SingleInspector key={objects[0].id} o={objects[0]} />

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import asar from '@electron/asar';
@@ -37,5 +37,4 @@ const files = candidates.filter((file) => existsSync(path.join('release', file.f
 if (!files.some((file) => file.id === 'flatpak')) throw new Error('Flatpak missing.');
 writeFileSync('release/SHA256SUMS', files.map((file) => `${file.sha256}  ${file.filename}\n`).join(''));
 writeFileSync('release/release.json', JSON.stringify({ version: pkg.version, files }, null, 2) + '\n');
-copyFileSync('docs/DISTRIBUTION.md', 'release/README.md');
 console.log(`Release ${pkg.version}: archive, production CSP, no debug bridge and license notices checked. SHA256SUMS created.`);

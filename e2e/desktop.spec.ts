@@ -24,7 +24,9 @@ test('Packaged app: sandbox, CSP, areas, file access, exports and restart', asyn
       const p = (BrowserWindow.getAllWindows()[0].webContents as unknown as { getLastWebPreferences(): { sandbox: boolean; contextIsolation: boolean; nodeIntegration: boolean } }).getLastWebPreferences();
       return { sandbox: p.sandbox, contextIsolation: p.contextIsolation, nodeIntegration: p.nodeIntegration };
     })).toEqual({ sandbox: true, contextIsolation: true, nodeIntegration: false });
-    await expect(page.getByTestId('welcome-dialog')).toBeVisible();
+    await expect(page.getByTestId('canvas-start')).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.getByTestId('desktop-download')).toHaveCount(0);
     expect(page.url()).toBe('app://bundle/index.html');
     expect(await page.evaluate(() => ({ dev: '__seatsketch' in window, node: 'require' in window, native: !!window.seatsketchNative }))
@@ -32,19 +34,15 @@ test('Packaged app: sandbox, CSP, areas, file access, exports and restart', asyn
     const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
     expect(csp).toContain("script-src 'self'");
     expect(csp).not.toContain("'unsafe-eval'");
-    await page.getByRole('combobox', { name: /Sprache|Language/ }).selectOption('de');
-    await page.getByTestId('template-blank').click();
-    await page.getByTestId('welcome-next').click();
-    await page.getByTestId('welcome-name').fill('Produktionsprüfung');
-    await page.getByTestId('welcome-create').click();
-    await expect(page.getByTestId('welcome-dialog')).toHaveCount(0);
+    await page.getByTestId('project-name').fill('Production check');
+    await page.getByTestId('project-name').press('Enter');
     await page.keyboard.press('a');
     const box = (await page.getByTestId('canvas').boundingBox())!;
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await expect(page.getByTestId('zone-name')).toBeFocused();
-    await page.getByTestId('zone-name').fill('Tanzfläche & Bühne');
+    await page.getByTestId('zone-name').fill('Dance floor & stage');
     await page.getByTestId('zone-name').press('Enter');
-    await page.getByRole('radio', { name: 'Bühne', exact: true }).click();
+    await page.getByRole('radio', { name: 'Stage', exact: true }).click();
     await page.screenshot({ path: '.build/screenshots/production.png' });
     // Replace native dialogs deliberately; renderer, preload, IPC and writing stay real.
     await app.evaluate(({ dialog }, file) => {
@@ -52,7 +50,7 @@ test('Packaged app: sandbox, CSP, areas, file access, exports and restart', asyn
     }, project);
     await page.keyboard.press('Control+s');
     await expect.poll(async () => {
-      try { return JSON.parse(await readFile(project, 'utf8')).objects.some((o: { type: string; name?: string }) => o.type === 'zone' && o.name === 'Tanzfläche & Bühne'); }
+      try { return JSON.parse(await readFile(project, 'utf8')).objects.some((o: { type: string; name?: string }) => o.type === 'zone' && o.name === 'Dance floor & stage'); }
       catch { return false; }
     }).toBe(true);
     expect(await page.evaluate(() => window.seatsketchNative!.openPath('/etc/passwd.seatsketch'))).toBeNull();
@@ -66,7 +64,7 @@ test('Packaged app: sandbox, CSP, areas, file access, exports and restart', asyn
       await page.getByTestId('export-run').click();
       await expect(page.getByTestId('export-dialog')).toHaveCount(0, { timeout: 30_000 });
       const data = await readFile(output);
-      if (format === 'svg') expect(data.toString()).toContain('TANZFLÄCHE &amp; BÜHNE');
+      if (format === 'svg') expect(data.toString()).toContain('DANCE FLOOR &amp; STAGE');
       if (format === 'png') expect(data.subarray(1, 4).toString()).toBe('PNG');
       if (format === 'pdf') expect(data.subarray(0, 5).toString()).toBe('%PDF-');
       if (format === 'csv') expect(data.toString()).toContain(';');
@@ -89,7 +87,7 @@ test('Packaged app: sandbox, CSP, areas, file access, exports and restart', asyn
     await app.close();
     app = await launch([pathToFileURL(project).href]);
     const reopened = await app.firstWindow();
-    await expect(reopened.getByTestId('project-name')).toHaveValue('Produktionsprüfung');
+    await expect(reopened.getByTestId('project-name')).toHaveValue('Production check');
     await expect(reopened.getByTestId('project-tabs').getByRole('tab')).toHaveCount(2);
     await expect(reopened.getByTestId('welcome-dialog')).toHaveCount(0);
   } finally {

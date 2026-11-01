@@ -1,8 +1,8 @@
 {
   "name": "seatsketch-studio",
   "private": true,
-  "version": "0.1.2",
-  "description": "Sitzpläne skizzieren – Tische malen, Stühle verteilen, Gäste setzen.",
+  "version": "0.2.0",
+  "description": "Sketch seating plans, arrange tables and seat guests. Local, offline, no account.",
   "author": "PixelCursor",
   "license": "MIT",
   "type": "module",
@@ -76,8 +76,8 @@
     "fileAssociations": [
       {
         "ext": "seatsketch",
-        "name": "Seatsketch-Projekt",
-        "description": "Seatsketch Studio Sitzplan",
+        "name": "Seatsketch project",
+        "description": "Seatsketch Studio seating plan",
         "mimeType": "application/x-seatsketch",
         "role": "Editor"
       }
@@ -88,7 +88,7 @@
       ],
       "category": "Office",
       "icon": "build/icon.png",
-      "synopsis": "Sitzpläne skizzieren",
+      "synopsis": "Sketch seating plans",
       "artifactName": "Seatsketch-Studio-${version}-${arch}.AppImage",
       "syncDesktopName": true,
       "desktop": {

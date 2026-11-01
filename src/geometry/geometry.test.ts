@@ -51,10 +51,10 @@ describe('Coordinate system', () => {
 });
 
 describe('Measurements', () => {
-  it('formats German', () => {
-    expect(formatLength(1.8, 'm')).toBe('1,80 m');
+  it('formats English measurements', () => {
+    expect(formatLength(1.8, 'm')).toBe('1.80 m');
     expect(formatLength(0.45, 'cm')).toBe('45 cm');
-    expect(formatLength(12, 'm')).toBe('12,00 m');
+    expect(formatLength(12, 'm')).toBe('12.00 m');
   });
 
   it('reads input with comma, dot and units', () => {

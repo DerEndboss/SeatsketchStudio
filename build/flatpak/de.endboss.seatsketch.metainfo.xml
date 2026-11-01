@@ -5,10 +5,8 @@
   <project_license>MIT</project_license>
   <name>Seatsketch Studio</name>
   <summary>Sketch seating plans and arrange guests</summary>
-  <summary xml:lang="de">Sitzpläne zeichnen und Gäste verteilen</summary>
   <description>
     <p>Draw rooms, tables and floor areas, arrange chairs and assign guests. Export your plans as PDF, PNG, SVG or CSV. Your projects stay on your device and work offline without an account.</p>
-    <p xml:lang="de">Zeichne Räume, Tische und Flächen, verteile Stühle und setze Gäste. Exportiere deine Pläne als PDF, PNG, SVG oder CSV. Deine Projekte bleiben auf deinem Gerät und funktionieren offline ohne Konto.</p>
   </description>
   <launchable type="desktop-id">de.endboss.seatsketch.desktop</launchable>
   <provides><mediatype>application/x-seatsketch</mediatype></provides>
@@ -16,8 +14,8 @@
   <content_rating type="oars-1.1"/>
   <supports><control>pointing</control><control>keyboard</control></supports>
   <releases>
-    <release version="0.1.2" date="2026-11-01">
-      <description><p>Editable floor areas and verified desktop packaging.</p></description>
+    <release version="0.2.0" date="2026-11-01">
+      <description><p>A calm English editor with inline templates and optional themes.</p></description>
     </release>
   </releases>
 </component>

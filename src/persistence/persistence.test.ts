@@ -55,7 +55,7 @@ describe('Project file', () => {
     raw.version = SCHEMA_VERSION + 3;
     const r = parseDocument(JSON.stringify(raw));
     if (!r.ok) throw new Error(r.error);
-    expect(r.warnings[0]).toMatch(/neueren Version/);
+    expect(r.warnings[0]).toMatch(/newer version/);
     expect(JSON.parse(serializeDocument(r.doc)).version).toBe(SCHEMA_VERSION + 3);
   });
 
@@ -72,7 +72,7 @@ describe('Project file', () => {
     const r = parseDocument(JSON.stringify(raw));
     if (!r.ok) throw new Error(r.error);
     expect(r.doc.objects.filter((o) => o.type === 'chair')).toHaveLength(before);
-    expect(r.warnings.some((w) => w.includes('Einzelstühle'))).toBe(true);
+    expect(r.warnings.some((w) => w.includes('single chairs'))).toBe(true);
   });
 });
 
@@ -80,7 +80,7 @@ describe('CSV', () => {
   it('export: header row, one row per chair, guests without a seat at the end', () => {
     const doc = createExampleDocument();
     const csv = assignmentsCsv(doc);
-    expect(csv.startsWith('﻿Tisch;Platz;Gast\r\n')).toBe(true);
+    expect(csv.startsWith('﻿Table;Seat;Guest\r\n')).toBe(true);
     const rows = parseCsv(csv);
     const chairs = doc.objects.filter((o) => o.type === 'chair').length;
     const seated = doc.objects.filter((o) => o.type === 'chair' && o.guestId).length;

@@ -2,7 +2,8 @@ import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { useT } from '../i18n';
 import { useEditor } from '../state/editorStore';
-import { useUi } from '../state/uiStore';
+import { createPlan } from '../editor/projects';
+import { createEmptyDocument } from '../editor/objects/factory';
 import { activatePlan, confirmDeletePlan, movePlan, usePlans } from '../editor/projects';
 import { cx } from './ui/Button';
 import { Tooltip } from './ui/Tooltip';
@@ -79,7 +80,7 @@ export function ProjectTabs() {
           type="button"
           aria-label={t('tabs.new')}
           data-testid="new-plan-tab"
-          onClick={() => useUi.getState().setWelcome(true)}
+          onClick={() => createPlan(createEmptyDocument())}
           className="mb-1 ml-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-ink"
         >
           <Plus size={15} />

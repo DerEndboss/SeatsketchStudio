@@ -1,4 +1,5 @@
-import { LayoutGrid, PenLine, SquareDashed, Users, FileText } from 'lucide-react';
+import { LayoutGrid, Users, FileText } from 'lucide-react';
+import { ThemePicker } from '../ThemePicker';
 import { useEditor } from '../../state/editorStore';
 import { useUi } from '../../state/uiStore';
 import { useT } from '../../i18n';
@@ -46,23 +47,19 @@ export function DocumentInspector() {
     }, 'chair-size');
   const activePreset = CHAIR_PRESETS.find((p) => Math.abs(p.width - s.chair.width) < 0.001 && Math.abs(p.depth - s.chair.depth) < 0.001)?.id;
 
+  if (empty) return (
+    <div data-testid="inspector-document">
+      <PanelTitle icon={FileText} title={doc.meta.name} sub="A fresh page. All yours." />
+      <Section title="Appearance"><ThemePicker compact /></Section>
+      <Section>
+        <p className="text-[12px] leading-relaxed text-muted">Start with a sketch, or borrow a starting point.</p>
+        <Button variant="ghost" icon={LayoutGrid} className="justify-start" data-testid="sidebar-templates" onClick={() => useUi.getState().setTemplatesOpen(true)}>Explore templates</Button>
+      </Section>
+    </div>
+  );
   return (
     <div data-testid="inspector-document">
       <PanelTitle icon={FileText} title={doc.meta.name} sub={t('insp.nothing')} />
-      {empty ? (
-        <Section title={t('doc.start')}>
-          <p className="text-[12px] leading-snug text-muted">{t('doc.startText')}</p>
-          <Button variant="primary" icon={SquareDashed} className="justify-start" onClick={() => cmd.setTool('room')}>
-            {t('doc.drawRoom')}
-          </Button>
-          <Button icon={PenLine} className="justify-start" onClick={() => cmd.setTool('freehand')}>
-            {t('doc.drawTable')}
-          </Button>
-          <Button icon={LayoutGrid} className="justify-start" onClick={() => useUi.getState().setWelcome(true)}>
-            {t('doc.fromTemplate')}
-          </Button>
-        </Section>
-      ) : (
         <Section title={t('doc.overview')}>
           <div className="grid grid-cols-2 gap-1.5">
             <Stat value={tables} label={t('tool.table')} />
@@ -70,11 +67,11 @@ export function DocumentInspector() {
             <Stat value={`${seated}/${doc.guests.length}`} label={t('doc.guestsSeated')} />
             <Stat value={area > 0 ? formatArea(area) : '–'} label={t('doc.area')} />
           </div>
+          <Button variant="ghost" icon={LayoutGrid} onClick={() => useUi.getState().setTemplatesOpen(true)}>Templates</Button>
           <Button variant="primary" icon={Users} className="mt-1" onClick={() => useUi.getState().openDialog('distribute')} disabled={tables === 0}>
             {t('doc.distributeAll')}
           </Button>
         </Section>
-      )}
       <Section title={t('doc.display')}>
         <ToggleRow label={t('doc.grid')} checked={s.showGrid} onChange={() => toggle('showGrid')} />
         <ToggleRow label={t('doc.dims')} checked={s.showDimensions} onChange={() => toggle('showDimensions')} />

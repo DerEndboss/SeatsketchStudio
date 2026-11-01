@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { version } from '../../../package.json';
 import { Info, Keyboard, Plus, RotateCcw, Search, Settings2, X } from 'lucide-react';
-import { langInfo, useI18n, useT } from '../../i18n';
+import { useT } from '../../i18n';
 import { useUi, type SettingsTab } from '../../state/uiStore';
 import { COMMANDS, GROUPS, commandById, commandForBinding, eventToBinding, formatBinding, keysFor, useKeymap } from '../../editor/keymap';
 import { Button, IconButton, Kbd, cx } from '../ui/Button';
 import { Dialog } from '../ui/Overlay';
 import { TextField, Note } from '../ui/Fields';
-import { LanguageSelect, ThemePicker } from '../ThemePicker';
+import { ThemePicker } from '../ThemePicker';
 
 export function SettingsDialog() {
   const open = useUi((s) => s.dialog === 'settings');
@@ -50,15 +50,8 @@ export function SettingsDialog() {
 
 function GeneralSettings() {
   const t = useT();
-  const lang = useI18n((s) => s.lang);
-  const chosen = useI18n((s) => s.chosen);
   return (
     <div className="flex flex-col gap-6">
-      <section>
-        <h3 className="mb-2 text-[13px] font-semibold text-ink">{t('settings.language')}</h3>
-        <LanguageSelect className="w-full max-w-xs" />
-        {!chosen && <p className="mt-2 text-[11.5px] text-muted">{t('settings.languageAuto', { name: langInfo(lang).name })}</p>}
-      </section>
       <section>
         <h3 className="mb-2 text-[13px] font-semibold text-ink">{t('settings.theme')}</h3>
         <ThemePicker />

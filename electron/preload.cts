@@ -11,7 +11,6 @@ contextBridge.exposeInMainWorld('seatsketchNative', {
   recentProjects: () => ipcRenderer.invoke('project:recent'),
   initialFile: () => ipcRenderer.invoke('project:initial'),
   toggleFullscreen: () => ipcRenderer.invoke('window:fullscreen'),
-  setLanguage: (lang: string) => ipcRenderer.send('app:language', lang),
 });
 
 // Second launch with a file (double-click while the app is running)
