@@ -6,6 +6,18 @@ export interface Plural {
 
 /** Deutsch ist die Referenz – alle anderen Sprachen müssen genau diese Schlüssel haben. */
 export const de = {
+  "start.title": "Platz für dein nächstes Zusammensein.",
+  "start.description": "Zeichne einen Raum, skizziere Tische und gib allen einen Platz.",
+  "start.saved": "Dein Plan wird auf diesem Gerät gesichert. Lass dir Zeit.",
+  "templates.open": "Vorlagen",
+  "templates.back": "Zurück zu den Eigenschaften",
+  "templates.title": "Ein kleiner Vorsprung",
+  "templates.description": "Wähle einen Ausgangspunkt und mach ihn zu deinem.",
+  "templates.preserve": "Bestehende Pläne bleiben sicher in ihrem eigenen Tab.",
+  "doc.fresh": "Ein frisches Blatt. Ganz für dich.",
+  "doc.appearance": "Aussehen",
+  "doc.startHint": "Starte mit einer Skizze oder nutze eine Vorlage.",
+  "doc.exploreTemplates": "Vorlagen entdecken",
   'app.name': 'Seatsketch Studio',
   'app.tagline': 'Sitzpläne skizzieren – Tische malen, Stühle verteilen, Gäste setzen.',
   'app.local': 'Alles bleibt lokal auf deinem Gerät. Kein Konto, keine Cloud.',

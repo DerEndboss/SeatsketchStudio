@@ -74,7 +74,7 @@ export function TopBar() {
 
   const fileMenu = (): MenuItem[] => [
     { label: t('cmd.newPlan'), icon: FilePlus, shortcut: sc('newPlan'), onSelect: () => cmd.runCommand('newPlan') },
-    { label: 'Templates', icon: LayoutGrid, onSelect: () => ui().setTemplatesOpen(true) },
+    { label: t('templates.open'), icon: LayoutGrid, onSelect: () => ui().setTemplatesOpen(true) },
     { label: t('cmd.open'), icon: FolderOpen, shortcut: sc('open'), onSelect: () => void cmd.openProject() },
     { label: t('cmd.save'), icon: Save, shortcut: sc('save'), onSelect: () => void cmd.saveProject(false) },
     { label: t('cmd.saveAs'), shortcut: sc('saveAs'), onSelect: () => void cmd.saveProject(true) },

@@ -1,6 +1,18 @@
 import type { Messages } from './de';
 
 export const es: Messages = {
+  "start.title": "Un espacio para tu próxima reunión.",
+  "start.description": "Dibuja una sala, esboza mesas y haz que todos se sientan como en casa.",
+  "start.saved": "Tu trabajo se guarda en este dispositivo. Tómate tu tiempo.",
+  "templates.open": "Plantillas",
+  "templates.back": "Volver a propiedades",
+  "templates.title": "Un buen comienzo",
+  "templates.description": "Elige un punto de partida y hazlo tuyo.",
+  "templates.preserve": "Los planos existentes se conservan en su propia pestaña.",
+  "doc.fresh": "Una página nueva. Toda tuya.",
+  "doc.appearance": "Apariencia",
+  "doc.startHint": "Empieza con un boceto o utiliza una plantilla.",
+  "doc.exploreTemplates": "Explorar plantillas",
   'app.name': 'Seatsketch Studio',
   'app.tagline': 'Dibuja planos de mesas – crea mesas, reparte sillas, sienta a tus invitados.',
   'app.local': 'Todo se queda en tu dispositivo. Sin cuenta, sin nube.',

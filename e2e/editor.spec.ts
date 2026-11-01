@@ -42,7 +42,6 @@ const errors = new WeakMap<Page, string[]>();
 test.beforeEach(async ({ page }) => {
   errors.set(page, []);
   page.on('pageerror', (error) => errors.get(page)?.push(error.message));
-  await page.addInitScript(() => localStorage.setItem('seatsketch:lang', 'de'));
   await page.goto('/');
   await expect(page.getByTestId('canvas-start')).toBeVisible();
   await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -56,6 +55,10 @@ test('Direct English editor on a German system, with optional persistent themes'
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.getByTestId('project-tabs').getByRole('tab')).toHaveCount(1);
   await expect(page.getByTestId('project-name')).toHaveValue('Untitled plan');
+  await expect(page.getByRole('radio', { name: 'System', exact: true })).toHaveAttribute('aria-checked', 'true');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(page.locator('html')).toHaveClass(/theme-espresso/);
+  await page.emulateMedia({ colorScheme: 'light' });
   await expect(page.locator('html')).toHaveClass(/theme-beige/);
   await page.getByRole('radio', { name: 'Espresso dark' }).click();
   await expect(page.locator('html')).toHaveClass(/theme-espresso/);
@@ -64,6 +67,31 @@ test('Direct English editor on a German system, with optional persistent themes'
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByTestId('desktop-download')).toBeVisible();
+});
+
+test('Settings language switches immediately and survives reload without changing plan data', async ({ page }) => {
+  await page.getByTestId('project-name').fill('Keep my plan name');
+  await page.getByTestId('project-name').press('Enter');
+  await page.getByTestId('open-settings').click();
+  const language = page.getByTestId('language-select');
+  await expect(language).toHaveValue('en');
+  for (const lang of ['es', 'zh', 'hi', 'de']) {
+    await language.selectOption(lang);
+    await expect(page.locator('html')).toHaveAttribute('lang', lang);
+  }
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('canvas-start')).toContainText('Platz für dein nächstes Zusammensein.');
+  await page.getByTestId('sidebar-templates').click();
+  await expect(page.getByTestId('template-library')).toContainText('Ein kleiner Vorsprung');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await expect(page.getByTestId('project-name')).toHaveValue('Keep my plan name');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByTestId('open-settings').click();
+  await expect(page.getByTestId('language-select')).toHaveValue('de');
+  await page.getByTestId('language-select').selectOption('en');
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('canvas-start')).toContainText('A little space for your next gathering.');
 });
 
 test('Templates are optional and never replace a non-empty project', async ({ page }) => {

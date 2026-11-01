@@ -34,6 +34,19 @@ test('Packaged app: sandbox, CSP, areas, file access, exports and restart', asyn
     const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
     expect(csp).toContain("script-src 'self'");
     expect(csp).not.toContain("'unsafe-eval'");
+    await page.getByTestId('open-settings').click();
+    await page.getByTestId('language-select').selectOption('de');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+    await app.evaluate(({ dialog }) => {
+      dialog.showOpenDialog = async (...args: unknown[]) => {
+        const options = args[args.length - 1] as { title: string };
+        if (options.title !== 'Plan öffnen') throw new Error('Native language was not updated');
+        return { canceled: true, filePaths: [] };
+      };
+    });
+    expect(await page.evaluate(() => window.seatsketchNative!.openProject())).toBeNull();
+    await page.getByTestId('language-select').selectOption('en');
+    await page.keyboard.press('Escape');
     await page.getByTestId('project-name').fill('Production check');
     await page.getByTestId('project-name').press('Enter');
     await page.keyboard.press('a');

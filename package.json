@@ -1,7 +1,7 @@
 {
   "name": "seatsketch-studio",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Sketch seating plans, arrange tables and seat guests. Local, offline, no account.",
   "author": "PixelCursor",
   "license": "MIT",

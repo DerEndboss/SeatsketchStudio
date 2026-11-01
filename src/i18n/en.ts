@@ -1,6 +1,18 @@
 import type { Messages } from './de';
 
 export const en: Messages = {
+  "start.title": "A little space for your next gathering.",
+  "start.description": "Draw a room, sketch a table, make everyone feel at home.",
+  "start.saved": "Your work is saved on this device. Take your time.",
+  "templates.open": "Templates",
+  "templates.back": "Back to properties",
+  "templates.title": "A head start",
+  "templates.description": "Pick a starting point. Make it yours.",
+  "templates.preserve": "An existing plan stays safe in its own tab.",
+  "doc.fresh": "A fresh page. All yours.",
+  "doc.appearance": "Appearance",
+  "doc.startHint": "Start with a sketch, or borrow a starting point.",
+  "doc.exploreTemplates": "Explore templates",
   'app.name': 'Seatsketch Studio',
   'app.tagline': 'Sketch seating plans – draw tables, place chairs, seat your guests.',
   'app.local': 'Everything stays on your device. No account, no cloud.',

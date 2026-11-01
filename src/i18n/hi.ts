@@ -1,6 +1,18 @@
 import type { Messages } from './de';
 
 export const hi: Messages = {
+  "start.title": "अगली मुलाकात के लिए थोड़ी जगह।",
+  "start.description": "कमरा बनाएं, मेज़ें सजाएं और सभी को घर जैसा महसूस कराएं।",
+  "start.saved": "आपका काम इस डिवाइस पर सहेजा जाता है। आराम से बनाएं।",
+  "templates.open": "टेम्पलेट",
+  "templates.back": "गुणों पर वापस जाएं",
+  "templates.title": "एक आसान शुरुआत",
+  "templates.description": "शुरुआत चुनें और उसे अपना बनाएं।",
+  "templates.preserve": "मौजूदा योजनाएं अपने टैब में सुरक्षित रहती हैं।",
+  "doc.fresh": "नया पन्ना। पूरी तरह आपका।",
+  "doc.appearance": "रूप-रंग",
+  "doc.startHint": "रेखाचित्र से शुरू करें या टेम्पलेट चुनें।",
+  "doc.exploreTemplates": "टेम्पलेट देखें",
   'app.name': 'Seatsketch Studio',
   'app.tagline': 'बैठने की योजना बनाइए – मेज़ बनाइए, कुर्सियाँ लगाइए, मेहमानों को बिठाइए।',
   'app.local': 'सब कुछ आपके डिवाइस पर ही रहता है। न खाता, न क्लाउड।',

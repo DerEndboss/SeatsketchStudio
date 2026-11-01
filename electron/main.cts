@@ -26,7 +26,15 @@ let pendingFile: string | null = findFileArg(process.argv);
 /** Paths the user picked themselves (dialog, double-click, recent files). Only those are written to. */
 const granted = new Set<string>();
 
-const T = { open: 'Open plan', save: 'Save plan', export: 'Export', project: 'Seatsketch project' };
+type Lang = 'de' | 'en' | 'es' | 'zh' | 'hi';
+let lang: Lang = 'en';
+const T: Record<Lang, { open: string; save: string; export: string; project: string }> = {
+  de: { open: 'Plan öffnen', save: 'Plan speichern', export: 'Exportieren', project: 'Seatsketch-Projekt' },
+  en: { open: 'Open plan', save: 'Save plan', export: 'Export', project: 'Seatsketch project' },
+  es: { open: 'Abrir plano', save: 'Guardar plano', export: 'Exportar', project: 'Proyecto de Seatsketch' },
+  zh: { open: '打开方案', save: '保存方案', export: '导出', project: 'Seatsketch 项目' },
+  hi: { open: 'योजना खोलें', save: 'योजना सहेजें', export: 'निर्यात करें', project: 'Seatsketch प्रोजेक्ट' },
+};
 
 function findFileArg(argv: readonly string[]): string | null {
   for (const arg of argv.slice(1)) {
@@ -88,7 +96,7 @@ async function writeAtomic(p: string, data: string | Uint8Array): Promise<void> 
 /* -------------------------------------------- IPC -------------------------------------------- */
 
 function registerIpc(): void {
-  const filters = () => [{ name: T.project, extensions: [EXT] }];
+  const filters = () => [{ name: T[lang].project, extensions: [EXT] }];
   const handle = (channel: string, listener: (event: IpcMainInvokeEvent, ...args: unknown[]) => unknown) => {
     ipcMain.handle(channel, (event, ...args: unknown[]) => {
       if (!win || event.sender !== win.webContents || event.senderFrame !== win.webContents.mainFrame) {
@@ -98,6 +106,11 @@ function registerIpc(): void {
     });
   };
 
+  ipcMain.on('app:language', (e, l: unknown) => {
+    if (!win || e.sender !== win.webContents || e.senderFrame !== win.webContents.mainFrame) return;
+    if (l === 'de' || l === 'en' || l === 'es' || l === 'zh' || l === 'hi') lang = l;
+  });
+
   handle('window:fullscreen', () => {
     if (!win) return false;
     win.setFullScreen(!win.isFullScreen());
@@ -106,7 +119,7 @@ function registerIpc(): void {
 
   handle('project:open', async () => {
     if (!win) return null;
-    const res = await dialog.showOpenDialog(win, { title: T.open, filters: filters(), properties: ['openFile'] });
+    const res = await dialog.showOpenDialog(win, { title: T[lang].open, filters: filters(), properties: ['openFile'] });
     if (res.canceled || !res.filePaths[0]) return null;
     return readProject(res.filePaths[0]);
   });
@@ -130,7 +143,7 @@ function registerIpc(): void {
     if (target && !granted.has(target) && !(await readRecent()).includes(target)) target = null;
     if (!target) {
       const res = await dialog.showSaveDialog(win, {
-        title: T.save,
+        title: T[lang].save,
         defaultPath: path.join(app.getPath('documents'), `${String(suggestedName || 'Seating plan')}.${EXT}`),
         filters: filters(),
       });
@@ -147,7 +160,7 @@ function registerIpc(): void {
     if (!win || !(data instanceof Uint8Array)) return null;
     const f = filter as { name?: string; extensions?: string[] } | null;
     const res = await dialog.showSaveDialog(win, {
-      title: T.export,
+      title: T[lang].export,
       defaultPath: path.join(app.getPath('documents'), String(suggestedName || 'Export')),
       filters: f?.extensions?.length ? [{ name: String(f.name ?? 'File'), extensions: f.extensions.map(String) }] : [],
     });

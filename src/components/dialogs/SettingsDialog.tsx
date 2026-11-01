@@ -7,7 +7,7 @@ import { COMMANDS, GROUPS, commandById, commandForBinding, eventToBinding, forma
 import { Button, IconButton, Kbd, cx } from '../ui/Button';
 import { Dialog } from '../ui/Overlay';
 import { TextField, Note } from '../ui/Fields';
-import { ThemePicker } from '../ThemePicker';
+import { LanguageSelect, ThemePicker } from '../ThemePicker';
 
 export function SettingsDialog() {
   const open = useUi((s) => s.dialog === 'settings');
@@ -52,6 +52,12 @@ function GeneralSettings() {
   const t = useT();
   return (
     <div className="flex flex-col gap-6">
+      <section>
+        <label className="mb-2 block text-[13px] font-semibold text-ink">
+          <span className="mb-2 block">{t('settings.language')}</span>
+          <LanguageSelect className="w-full max-w-xs" />
+        </label>
+      </section>
       <section>
         <h3 className="mb-2 text-[13px] font-semibold text-ink">{t('settings.theme')}</h3>
         <ThemePicker />

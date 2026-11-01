@@ -7,6 +7,7 @@ interface SeatsketchNativeFile {
 
 interface SeatsketchNative {
   platform: string;
+  setLanguage(lang: string): void;
   openProject(): Promise<SeatsketchNativeFile | null>;
   openPath(path: string): Promise<SeatsketchNativeFile | null>;
   saveProject(path: string | null, content: string, suggestedName: string): Promise<{ path: string; name: string } | null>;

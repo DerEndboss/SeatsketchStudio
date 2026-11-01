@@ -1,6 +1,18 @@
 import type { Messages } from './de';
 
 export const zh: Messages = {
+  "start.title": "为下一次相聚留一片空间。",
+  "start.description": "画出房间，布置桌椅，让每个人都有宾至如归的感觉。",
+  "start.saved": "作品保存在此设备上。慢慢来。",
+  "templates.open": "模板",
+  "templates.back": "返回属性",
+  "templates.title": "轻松起步",
+  "templates.description": "选择一个起点，打造自己的方案。",
+  "templates.preserve": "现有方案会保留在各自的标签页中。",
+  "doc.fresh": "崭新画布，随心创作。",
+  "doc.appearance": "外观",
+  "doc.startHint": "从草图开始，或选择一个模板。",
+  "doc.exploreTemplates": "浏览模板",
   'app.name': 'Seatsketch Studio',
   'app.tagline': '轻松绘制座位图——画桌子、摆椅子、安排宾客。',
   'app.local': '所有数据都保存在你的设备上。无需账号，不上云。',

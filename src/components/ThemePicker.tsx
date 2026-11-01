@@ -1,8 +1,29 @@
 import { Check, Monitor } from 'lucide-react';
-import { useT } from '../i18n';
+import { LANGS, useI18n, useT, type Lang } from '../i18n';
 import { useUi } from '../state/uiStore';
 import { THEMES } from '../styles/themes';
 import { cx } from './ui/Button';
+
+export function LanguageSelect({ className }: { className?: string }) {
+  const t = useT();
+  const lang = useI18n((s) => s.lang);
+  const setLang = useI18n((s) => s.setLang);
+  return (
+    <select
+      aria-label={t('settings.language')}
+      data-testid="language-select"
+      value={lang}
+      onChange={(e) => setLang(e.target.value as Lang)}
+      className={cx('h-8 rounded-md border border-line bg-field px-2 text-[12px] text-ink outline-none hover:border-line-strong focus:border-accent', className)}
+    >
+      {LANGS.map((l) => (
+        <option key={l.id} value={l.id}>
+          {l.name}
+        </option>
+      ))}
+    </select>
+  );
+}
 
 export function ThemePicker({ system = true, compact = false }: { system?: boolean; compact?: boolean }) {
   const t = useT();

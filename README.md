@@ -6,7 +6,9 @@ Your plans stay on your device, with no account, backend or telemetry.
 [Open the editor](https://seatsketch.pixel-cursor.com) · [Windows & Linux downloads](https://exporthub.pixel-cursor.com/download/seatsketch)
 
 The editor opens straight onto a blank canvas. Templates live in the optional properties sidebar;
-the five themes are yours to choose. All interface text is English, regardless of the OS language.
+the theme follows your system until you choose another. English is the default regardless of the
+OS language; Settings → Language offers English, German, Spanish, Simplified Chinese and Hindi.
+Explicit language and theme preferences are saved on this device.
 Existing plans and guest names keep their original text. The web editor has a Download button in
 the bottom-left corner; native builds omit it.
 

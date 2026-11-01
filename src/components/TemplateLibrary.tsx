@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useUi } from '../state/uiStore';
 import { useEditor } from '../state/editorStore';
 import { useFile } from '../state/fileStore';
-import { useT } from '../i18n';
+import { useI18n, useT } from '../i18n';
 import { buildTemplate, TEMPLATES, type TemplateId } from '../persistence/templates';
 import { buildPlanSvg } from '../export/svg';
 import { createPlan } from '../editor/projects';
@@ -11,9 +11,10 @@ import { fitView } from '../editor/view';
 
 export function TemplateLibrary() {
   const t = useT();
+  const lang = useI18n((s) => s.lang);
   const previews = useMemo(() => Object.fromEntries(TEMPLATES.map((def) => [def.id, buildPlanSvg(buildTemplate(def.id), {
     showDimensions: false, showGuestNames: false, showTableNames: false, background: null, pxPerMeter: 16,
-  }).svg])), []);
+  }).svg])), [lang]);
   const choose = (id: TemplateId) => {
     const editor = useEditor.getState();
     let doc = buildTemplate(id);
@@ -27,9 +28,9 @@ export function TemplateLibrary() {
   };
   return (
     <section data-testid="template-library" className="px-3 py-3">
-      <button type="button" onClick={() => useUi.getState().setTemplatesOpen(false)} className="mb-4 inline-flex min-h-9 items-center gap-2 rounded-md px-2 text-[12px] text-muted hover:bg-hover hover:text-ink"><ArrowLeft size={14} />Back to properties</button>
-      <h2 className="px-2 text-[14px] font-semibold text-ink">A head start</h2>
-      <p className="mb-4 mt-1 px-2 text-[12px] leading-relaxed text-muted">Pick a starting point. Make it yours.</p>
+      <button type="button" onClick={() => useUi.getState().setTemplatesOpen(false)} className="mb-4 inline-flex min-h-9 items-center gap-2 rounded-md px-2 text-[12px] text-muted hover:bg-hover hover:text-ink"><ArrowLeft size={14} />{t('templates.back')}</button>
+      <h2 className="px-2 text-[14px] font-semibold text-ink">{t('templates.title')}</h2>
+      <p className="mb-4 mt-1 px-2 text-[12px] leading-relaxed text-muted">{t('templates.description')}</p>
       <div className="flex flex-col gap-2">
         {TEMPLATES.map((def) => (
           <button type="button" key={def.id} data-testid={`template-${def.id}`} onClick={() => choose(def.id)} className="flex min-h-[86px] items-center gap-3 rounded-xl border border-line/70 bg-field/60 p-2 text-left transition-colors hover:border-accent/50 hover:bg-accent-soft focus-visible:ring-2 focus-visible:ring-accent">
@@ -38,7 +39,7 @@ export function TemplateLibrary() {
           </button>
         ))}
       </div>
-      <p className="mt-4 px-2 text-[11px] leading-relaxed text-faint">An existing plan stays safe in its own tab.</p>
+      <p className="mt-4 px-2 text-[11px] leading-relaxed text-faint">{t('templates.preserve')}</p>
     </section>
   );
 }

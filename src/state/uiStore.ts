@@ -114,7 +114,7 @@ function readTheme(): ThemeSetting {
   if (v === 'light') return 'beige';
   if (v === 'dark') return 'espresso';
   if (v === 'system' || v === 'beige' || v === 'espresso' || v === 'sage' || v === 'midnight') return v;
-  return 'beige';
+  return 'system';
 }
 
 function readSystemDark(): boolean {

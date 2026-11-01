@@ -25,6 +25,7 @@ export function useThemeClass(): void {
   }, [theme]);
   useEffect(() => {
     document.documentElement.lang = lang;
+    window.seatsketchNative?.setLanguage(lang);
   }, [lang]);
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');

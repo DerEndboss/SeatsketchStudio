@@ -49,11 +49,11 @@ export function DocumentInspector() {
 
   if (empty) return (
     <div data-testid="inspector-document">
-      <PanelTitle icon={FileText} title={doc.meta.name} sub="A fresh page. All yours." />
-      <Section title="Appearance"><ThemePicker compact /></Section>
+      <PanelTitle icon={FileText} title={doc.meta.name} sub={t('doc.fresh')} />
+      <Section title={t('doc.appearance')}><ThemePicker compact /></Section>
       <Section>
-        <p className="text-[12px] leading-relaxed text-muted">Start with a sketch, or borrow a starting point.</p>
-        <Button variant="ghost" icon={LayoutGrid} className="justify-start" data-testid="sidebar-templates" onClick={() => useUi.getState().setTemplatesOpen(true)}>Explore templates</Button>
+        <p className="text-[12px] leading-relaxed text-muted">{t('doc.startHint')}</p>
+        <Button variant="ghost" icon={LayoutGrid} className="justify-start" data-testid="sidebar-templates" onClick={() => useUi.getState().setTemplatesOpen(true)}>{t('doc.exploreTemplates')}</Button>
       </Section>
     </div>
   );
@@ -67,7 +67,7 @@ export function DocumentInspector() {
             <Stat value={`${seated}/${doc.guests.length}`} label={t('doc.guestsSeated')} />
             <Stat value={area > 0 ? formatArea(area) : '–'} label={t('doc.area')} />
           </div>
-          <Button variant="ghost" icon={LayoutGrid} onClick={() => useUi.getState().setTemplatesOpen(true)}>Templates</Button>
+          <Button variant="ghost" icon={LayoutGrid} onClick={() => useUi.getState().setTemplatesOpen(true)}>{t('templates.open')}</Button>
           <Button variant="primary" icon={Users} className="mt-1" onClick={() => useUi.getState().openDialog('distribute')} disabled={tables === 0}>
             {t('doc.distributeAll')}
           </Button>

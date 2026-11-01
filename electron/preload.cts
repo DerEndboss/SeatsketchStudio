@@ -3,6 +3,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 /** Narrow, validated bridge to the main process. The renderer gets no Node access. */
 contextBridge.exposeInMainWorld('seatsketchNative', {
   platform: process.platform,
+  setLanguage: (lang: string) => ipcRenderer.send('app:language', lang),
   openProject: () => ipcRenderer.invoke('project:open'),
   openPath: (p: string) => ipcRenderer.invoke('project:openPath', p),
   saveProject: (p: string | null, content: string, suggestedName: string) => ipcRenderer.invoke('project:save', p, content, suggestedName),
