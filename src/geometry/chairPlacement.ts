@@ -8,7 +8,8 @@ import type { ChairSize, TableObject } from '../types/document';
  * Chair distribution, purely geometric:
  *  1. "Tracks" on which chair centres may lie are derived from the table outline
  *     (rectangle: one straight track per side; all other shapes: the outline offset outwards).
- *  2. The chair count is distributed across the tracks in proportion to track length (with a capacity limit).
+ *  2. The chair count is distributed across the tracks in proportion to track length (with a capacity limit,
+ *     Sainte-Laguë chair by chair: one more chair takes none away from any track).
  *  3. On each track the chairs sit at equal arc distances; each chair faces the
  *     nearest point of the table edge.
  * ---------------------------------------------------------------------------------------- */
@@ -187,8 +188,17 @@ export function seatingCapacity(table: TableGeometry, size: ChairSize): number {
 }
 
 /**
- * Distributes `total` as integers in proportion to `weights` (Hare/Niemeyer with upper limits).
- * Guaranteed: sum = min(total, sum of the limits), no entry above its limit.
+ * Distributes `total` as integers in proportion to `weights`: Sainte-Laguë/Webster, chair by chair,
+ * with upper limits. Each further chair goes to the entry with the highest quotient
+ * w / (n + 0.5) that still has room; ties go to the one with the smaller index.
+ *
+ * Because the distribution for t + 1 chairs is exactly the one for t chairs plus one, it is
+ * house monotone: one more chair takes none away from any table or table side.
+ * The earlier Hare/Niemeyer method (largest remainders) had this Alabama paradox,
+ * e.g. three tables with 11/13/9 seats: 16 chairs → 5/6/5, 17 chairs → 6/7/4.
+ *
+ * Guaranteed: sum = min(total, sum of the limits), no entry above its limit, and
+ * allocateProportional(w, t + 1, c)[i] >= allocateProportional(w, t, c)[i] for every i.
  */
 export function allocateProportional(weights: readonly number[], total: number, caps?: readonly number[]): number[] {
   const n = weights.length;
@@ -206,40 +216,20 @@ export function allocateProportional(weights: readonly number[], total: number, 
   }
   const capSum = caps ? active.reduce((s, i) => s + cap(i), 0) : Infinity;
   const target = Math.min(want, capSum);
-  const real = new Array<number>(n).fill(0);
-  let rest = target;
-  let open = active.slice();
-  while (open.length > 0) {
-    const wsum = open.reduce((s, i) => s + w[i], 0);
-    const over = open.filter((i) => (rest * w[i]) / wsum >= cap(i));
-    if (over.length === 0) {
-      for (const i of open) real[i] = (rest * w[i]) / wsum;
-      break;
+  for (let seat = 0; seat < target; seat++) {
+    let best = -1;
+    let bestQuotient = -Infinity;
+    for (const i of active) {
+      if (result[i] >= cap(i)) continue;
+      const quotient = w[i] / (result[i] + 0.5);
+      // relative tolerance: rounding noise in track lengths does not decide a tie
+      if (best < 0 || quotient > bestQuotient * (1 + 1e-12)) {
+        best = i;
+        bestQuotient = quotient;
+      }
     }
-    for (const i of over) {
-      real[i] = cap(i);
-      rest -= cap(i);
-    }
-    open = open.filter((i) => !over.includes(i));
-  }
-  for (let i = 0; i < n; i++) result[i] = Math.floor(real[i] + 1e-9);
-  let deficit = target - result.reduce((s, x) => s + x, 0);
-  const order = active
-    .slice()
-    .sort((a, b) => real[b] - result[b] - (real[a] - result[a]) || w[b] - w[a] || a - b);
-  for (const i of order) {
-    if (deficit <= 0) break;
-    if (result[i] < cap(i) && real[i] - result[i] > 1e-9) {
-      result[i]++;
-      deficit--;
-    }
-  }
-  for (const i of order) {
-    if (deficit <= 0) break;
-    if (result[i] < cap(i)) {
-      result[i]++;
-      deficit--;
-    }
+    if (best < 0) break;
+    result[best]++;
   }
   return result;
 }
@@ -291,6 +281,8 @@ export interface TableAllocation {
 /**
  * Distributes a total number of chairs across several tables: larger tables (more room at the edge)
  * get more chairs, no table more than `maxPerTable` or than physically fit.
+ * House monotone like `allocateProportional`: raising the total by one gives exactly
+ * one table one more chair and none loses one.
  */
 export function allocateAcrossTables(
   tables: readonly TableAllocationInput[],

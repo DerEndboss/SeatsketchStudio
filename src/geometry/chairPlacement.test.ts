@@ -244,6 +244,69 @@ describe('Proportional distribution (expected/actual)', () => {
   });
 });
 
+describe('House monotonicity: one more chair takes none away from anyone (no Alabama paradox)', () => {
+  // small deterministic random generator so the test stays reproducible
+  const rng = (seed: number) => () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+
+  it('3 tables with 11/13/9 seats: 16 → 17 chairs, no table loses (Hare/Niemeyer: 5/6/5 → 6/7/4)', () => {
+    const tables = [{ id: 'a', capacity: 11 }, { id: 'b', capacity: 13 }, { id: 'c', capacity: 9 }];
+    const before = allocateAcrossTables(tables, 16, 99).counts;
+    const after = allocateAcrossTables(tables, 17, 99).counts;
+    let gained = 0;
+    for (const [id, n] of before) {
+      const m = after.get(id)!;
+      expect(m).toBeGreaterThanOrEqual(n);
+      gained += m - n;
+    }
+    expect(gained).toBe(1);
+  });
+
+  it('2,000 random table sets: every increase by one gives exactly one table one more chair', () => {
+    const next = rng(20261102);
+    const violations: string[] = [];
+    let steps = 0;
+    for (let run = 0; run < 2000; run++) {
+      const n = 2 + Math.floor(next() * 8);
+      const weights = Array.from({ length: n }, () => 0.5 + next() * 12);
+      const caps = Array.from({ length: n }, () => 1 + Math.floor(next() * 14));
+      const capSum = caps.reduce((s, c) => s + c, 0);
+      let prev = allocateProportional(weights, 0, caps);
+      for (let total = 1; total <= capSum + 2; total++) {
+        const cur = allocateProportional(weights, total, caps);
+        const gained = cur.reduce((s, x, i) => s + x - prev[i], 0);
+        const lost = cur.some((x, i) => x < prev[i]);
+        const overCap = cur.some((x, i) => x > caps[i]);
+        if (lost || overCap || gained !== (total <= capSum ? 1 : 0)) violations.push(`${run}:${total}`);
+        steps++;
+        prev = cur;
+      }
+    }
+    expect(steps).toBeGreaterThan(10_000);
+    expect(violations).toEqual([]);
+  });
+
+  it('rectangular table with four sides: chairs per side only grow when the total rises', () => {
+    for (const [width, height] of [[1.8, 0.8], [2.4, 1.0], [3.1, 1.3], [1.2, 1.2]]) {
+      const t = table({ width, height, seating: seating({ mode: 'perimeter' }) });
+      const cap = seatingCapacity(t, CHAIR);
+      const perSide = (count: number) => {
+        const sides = new Map<number, number>();
+        for (const p of layoutChairs(t, count, CHAIR).poses) {
+          const key = Math.round(p.rotation);
+          sides.set(key, (sides.get(key) ?? 0) + 1);
+        }
+        return sides;
+      };
+      let prev = perSide(0);
+      for (let count = 1; count <= cap + 3; count++) {
+        const cur = perSide(count);
+        for (const [side, k] of prev) expect(cur.get(side) ?? 0).toBeGreaterThanOrEqual(k);
+        prev = cur;
+      }
+    }
+  });
+});
+
 describe('Distribute chairs across tables (expected/actual)', () => {
   const round = (id: string) => ({ id, capacity: seatingCapacity(table({ shape: 'round', width: 1.6, height: 1.6 }), CHAIR) });
   const rect = (id: string) => ({ id, capacity: seatingCapacity(table({ seating: seating({ mode: 'long' }) }), CHAIR) });
