@@ -1,7 +1,7 @@
 {
   "name": "seatsketch-studio",
   "private": true,
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Sketch seating plans, arrange tables and seat guests. Local, offline, no account.",
   "author": "PixelCursor",
   "license": "MIT",
@@ -41,7 +41,7 @@
     "@vitejs/plugin-react": "^6.1.2",
     "electron": "^45.2.1",
     "electron-builder": "^26.18.0",
-    "jsdom": "^30.1.3",
+    "jsdom": "^31.0.0",
     "jspdf": "^4.2.1",
     "konva": "^10.9.1",
     "lucide-react": "^1.66.0",

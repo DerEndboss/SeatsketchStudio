@@ -11,6 +11,7 @@ function run(command, args) {
 
 run('flatpak', ['--version']);
 run('flatpak-builder', ['--version']);
+run('fakeroot', ['--version']);
 const builderVersion = spawnSync('flatpak-builder', ['--version'], { encoding: 'utf8' }).stdout?.match(/(\d+)\.(\d+)\.(\d+)/);
 if (!builderVersion || Number(builderVersion[1]) < 1 || (Number(builderVersion[1]) === 1 && Number(builderVersion[2]) < 4)) {
   throw new Error('flatpak-builder >= 1.4 required (AppStream metadata).');
@@ -29,6 +30,8 @@ run('npm', ['run', 'build']);
 run('npm', ['run', 'electron:compile']);
 run('node_modules/.bin/electron-builder', ['--linux', 'dir', '--publish', 'never', '-c.directories.output=.build/desktop']);
 mkdirSync('release', { recursive: true });
-run('flatpak-builder', ['--force-clean', '--disable-rofiles-fuse', '--state-dir=.build/flatpak-state', '--repo=.build/flatpak-repo', '.build/flatpak', 'flatpak/de.endboss.seatsketch.json']);
+// System-installed BaseApps contain root-owned symlinks. fakeroot lets OSTree
+// preserve their metadata without a root build or a user installation.
+run('fakeroot', ['flatpak-builder', '--force-clean', '--disable-rofiles-fuse', '--state-dir=.build/flatpak-state', '--repo=.build/flatpak-repo', '.build/flatpak', 'flatpak/de.endboss.seatsketch.json']);
 const arch = process.arch === 'x64' ? 'x86_64' : process.arch === 'arm64' ? 'aarch64' : process.arch;
 run('flatpak', ['build-bundle', '--runtime-repo=https://flathub.org/repo/flathub.flatpakrepo', '.build/flatpak-repo', `release/Seatsketch-Studio-${pkg.version}-${arch}.flatpak`, manifest['app-id'], manifest.branch]);

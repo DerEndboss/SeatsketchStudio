@@ -14,6 +14,9 @@
   <content_rating type="oars-1.1"/>
   <supports><control>pointing</control><control>keyboard</control></supports>
   <releases>
+    <release version="0.2.3" date="2026-11-05">
+      <description><p>Refresh the desktop runtime, icons and build dependencies.</p></description>
+    </release>
     <release version="0.2.2" date="2026-11-02">
       <description><p>Distribute chairs one seat at a time: adding a chair now always gives exactly one table one more seat and never takes a seat away from another table or table side.</p></description>
     </release>

@@ -29,7 +29,7 @@ Node.js 24 and npm 12. Run `npm ci`, then `npx playwright install chromium` once
 | `xvfb-run -a npm run release:all` | Complete release pipeline |
 | `npm run clean` | Remove build/test output, preserving release files |
 
-Flatpak builds require `flatpak`, `flatpak-builder >= 1.4`, `appstream-compose`, and the
+Flatpak builds require `flatpak`, `flatpak-builder >= 1.4`, `fakeroot`, `appstream-compose`, and the
 Freedesktop Platform/SDK and Electron2 BaseApp on branch 25.08. See
 [distribution notes](docs/DISTRIBUTION.md) for maintainer details.
 The app uses Zypak and desktop file portals, without network, audio or home-directory access.
