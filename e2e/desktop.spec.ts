@@ -6,7 +6,7 @@ import { _electron, expect, test } from '@playwright/test';
 
 test('Packaged app: sandbox, CSP, areas, file access, exports and restart', async () => {
   const dir = await mkdtemp(path.join(tmpdir(), 'seatsketch-desktop-test-'));
-  const project = path.join(dir, 'Flächen & Gäste.seatsketch');
+  const project = path.join(dir, 'Café & Guests.seatsketch');
   const executablePath = path.resolve(process.env.SEATSKETCH_TEST_EXECUTABLE || '.build/desktop/linux-unpacked/seatsketch-studio');
   const launch = (args: string[] = []) => _electron.launch({
     executablePath,
