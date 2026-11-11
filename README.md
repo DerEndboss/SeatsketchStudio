@@ -5,6 +5,8 @@ Your plans stay on your device, with no account, backend or telemetry.
 
 [Open the editor](https://seatsketch.pixel-cursor.com) · [Windows & Linux downloads](https://exporthub.pixel-cursor.com/download/seatsketch)
 
+![The editor with a wedding plan: four round tables, a head table and a dance floor](docs/screenshot.png)
+
 The editor opens straight onto a blank canvas. Templates live in the optional properties sidebar;
 the theme follows your system until you choose another. English is the default regardless of the
 OS language; Settings → Language offers English, German, Spanish, Simplified Chinese and Hindi.
@@ -35,7 +37,7 @@ Freedesktop Platform/SDK and Electron2 BaseApp on branch 25.08. See
 The app uses Zypak and desktop file portals, without network, audio or home-directory access.
 Its stable application ID is `de.endboss.seatsketch`.
 
-Release files live outside Git in `release/`: three desktop packages, `SHA256SUMS` and
+Release files live outside Git in `release/` and on the [releases page](../../releases): three desktop packages, `SHA256SUMS` and
 `release.json`. There is no bundled installation guide. These direct downloads are not a
 Flathub publication. On Linux, the Windows artifact is checked for PE structure and packaged
 content; a native Windows test still requires a Windows machine.
@@ -57,4 +59,4 @@ format and local library; `export` produces SVG/PNG/PDF/CSV. `platforms` supplie
 file adapters, while `electron` owns the sandboxed desktop shell and validated file IPC.
 
 MIT, Copyright PixelCursor. See [LICENSE](LICENSE). Builds include `THIRD_PARTY_NOTICES.txt`.
-Maintainer architecture and deployment notes: [CLAUDE.md](CLAUDE.md).
+Product scope: [BUILD.md](BUILD.md). Architecture and maintainer notes: [CLAUDE.md](CLAUDE.md).

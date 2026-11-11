@@ -118,7 +118,7 @@ describe('Distribute chairs across all tables (expected/actual)', () => {
 
   it('larger tables get more chairs', () => {
     const small = createTable(presetById('square'), { x: 0, y: 0 }, 'Klein');
-    const big = createTable(presetById('banquet'), { x: 5, y: 0 }, 'Groß');
+    const big = createTable(presetById('banquet'), { x: 5, y: 0 }, 'Large');
     const { doc } = distributeChairs(docWith(small, big), [small.id, big.id], 12, 20);
     expect(chairsOf(doc, big.id).length).toBeGreaterThan(chairsOf(doc, small.id).length);
     expect(chairsOf(doc, big.id).length + chairsOf(doc, small.id).length).toBe(12);

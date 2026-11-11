@@ -41,7 +41,7 @@ export function createExampleDocument(): SeatDocument {
     createWindow({ x: 6, y: 1.8, rotation: 90 }, { depth: wall, offset: -wall / 2 }),
   ];
   const columns = [createColumn({ x: -5.2, y: -3.2 }), createColumn({ x: 5.2, y: -3.2 })];
-  const label = createLabel({ x: 0, y: 1.2 }, 'Tanzfläche');
+  const label = createLabel({ x: 0, y: 1.2 }, 'Dance floor');
   label.fontSize = 0.32;
 
   doc = { ...doc, objects: [room, ...head, ...rounds, door, ...windows, ...columns, label] };

@@ -192,7 +192,7 @@ test('Distribute chairs and undo completely', async ({ page }) => {
 });
 
 test('Name areas, change kind and size, undo/redo and save permanently', async ({ page }) => {
-  await createPlan(page, 'blank', 'Flächenplan');
+  await createPlan(page, 'blank', 'Area plan');
   await page.keyboard.press('a');
   const box = (await page.getByTestId('canvas').boundingBox())!;
   const center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
