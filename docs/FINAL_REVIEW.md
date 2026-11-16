@@ -1,5 +1,8 @@
 # Final review: Seatsketch Studio 0.2.1
 
+> **Historical snapshot** of the 0.2.1 review with its 0.2.2 addendum. Numbers here (versions, test counts) are from
+> that time. The current release and its checks live in [DISTRIBUTION.md](DISTRIBUTION.md) (0.2.4 validation, 2026-11-10).
+
 ## Addendum 0.2.2: chair distribution without the Alabama paradox (2 November 2026)
 
 - **Finding:** Distribution by Hare/Niemeyer (largest remainders) was not house monotone. Three
