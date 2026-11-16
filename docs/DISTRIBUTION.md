@@ -35,6 +35,10 @@ them. Published versioned files are immutable. Do not attach or link an installa
 The packages are direct downloads, without a publisher signature or a Flathub listing.
 
 `npm run clean` removes intermediate builds and test output while preserving `release/`.
+
+`release/` is local, untracked build output of whichever machine built last, so it can lag behind (on one machine it
+still held 0.2.3 on 2026-11-16). The published state is the GitHub release (`gh release view --json assets`) and
+ExportHub's `src/data/seatsketch-release.json`; both list 0.2.4.
 The project's own code is MIT, Copyright PixelCursor; packages contain library and font notices.
 
 ## Release rhythm
