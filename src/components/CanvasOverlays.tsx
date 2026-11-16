@@ -94,8 +94,14 @@ export function GuestPopover() {
   const [value, setValue] = useState(current);
   const done = useRef(false);
 
-  useEffect(() => {
+  const resetKey = `${pop?.chairId ?? ''}|${current}`;
+  const [seenKey, setSeenKey] = useState(resetKey);
+  if (seenKey !== resetKey) {
+    setSeenKey(resetKey);
     setValue(current);
+  }
+
+  useEffect(() => {
     done.current = false;
     if (pop) requestAnimationFrame(() => ref.current?.select());
   }, [pop?.chairId, current]);

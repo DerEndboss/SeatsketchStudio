@@ -69,6 +69,9 @@ interface PointerInfo {
 }
 
 export let activeController: Controller | null = null;
+function setActiveController(c: Controller | null): void {
+  activeController = c;
+}
 
 /**
  * Pointer logic of the canvas as a small state machine. Runs completely outside of
@@ -99,7 +102,7 @@ export class Controller {
         this.hover({ ...this.lastInfo, ctrl: s.ctrlDown });
       }
     });
-    activeController = this;
+    setActiveController(this);
   }
 
   destroy(): void {

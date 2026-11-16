@@ -289,6 +289,8 @@ export function baseName(name: string): string {
 }
 
 export function safeFileName(name: string): string {
-  const clean = name.replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const clean = Array.from(name, (ch) => (ch.charCodeAt(0) < 32 ? ' ' : ch))
+    .join('')
+    .replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim();
   return clean || tr('name.untitled');
 }

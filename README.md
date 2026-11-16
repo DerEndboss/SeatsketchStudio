@@ -58,5 +58,8 @@ commands and input. `components` contains the interface; `persistence` owns the 
 format and local library; `export` produces SVG/PNG/PDF/CSV. `platforms` supplies web and native
 file adapters, while `electron` owns the sandboxed desktop shell and validated file IPC.
 
-MIT, Copyright PixelCursor. See [LICENSE](LICENSE). Builds include `THIRD_PARTY_NOTICES.txt`.
 Product scope: [BUILD.md](BUILD.md). Architecture and maintainer notes: [CLAUDE.md](CLAUDE.md).
+
+## License
+
+MIT, Copyright PixelCursor. See [LICENSE](LICENSE). Builds include `THIRD_PARTY_NOTICES.txt`.
