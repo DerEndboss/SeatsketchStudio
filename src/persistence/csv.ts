@@ -32,12 +32,12 @@ export function assignmentsCsv(doc: SeatDocument): string {
     }
   }
   for (const g of doc.guests) if (!seated.has(g.id)) rows.push(line(['', '', g.name]));
-  return `﻿${rows.join('\r\n')}\r\n`;
+  return `\uFEFF${rows.join('\r\n')}\r\n`;
 }
 
 /** Splits CSV text into rows and cells (quotes, line breaks inside cells). */
 export function parseCsv(text: string, delimiter?: string): string[][] {
-  const src = text.replace(/^﻿/, '');
+  const src = text.replace(/^\uFEFF/, '');
   const firstLine = src.split(/\r?\n/, 1)[0] ?? '';
   const delim =
     delimiter ??

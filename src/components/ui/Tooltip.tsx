@@ -15,29 +15,35 @@ interface TooltipProps {
   disabled?: boolean;
 }
 
-let lastHide = 0;
+const hideClock = { at: 0 };
 
-/** Light tooltip with a keyboard shortcut. Appears after a delay, instantly when moving on to the next one. */
-export function Tooltip({ label, shortcut, side = 'bottom', children, disabled }: TooltipProps) {
-  const [rect, setRect] = useState<DOMRect | null>(null);
+/** Delayed show / immediate hide, kept outside the component so the timer ref never meets render. */
+function useTooltipTimer(rect: DOMRect | null, setRect: (r: DOMRect | null) => void) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
     if (timer.current) clearTimeout(timer.current);
   }, []);
 
-  if (disabled) return children;
-
   const show = (el: Element) => {
     if (timer.current) clearTimeout(timer.current);
-    const delay = Date.now() - lastHide < 400 ? 0 : 450;
+    const delay = Date.now() - hideClock.at < 400 ? 0 : 450;
     timer.current = setTimeout(() => setRect(el.getBoundingClientRect()), delay);
   };
   const hide = () => {
     if (timer.current) clearTimeout(timer.current);
-    if (rect) lastHide = Date.now();
+    if (rect) hideClock.at = Date.now();
     setRect(null);
   };
+  return { show, hide };
+}
+
+/** Light tooltip with a keyboard shortcut. Appears after a delay, instantly when moving on to the next one. */
+export function Tooltip({ label, shortcut, side = 'bottom', children, disabled }: TooltipProps) {
+  const [rect, setRect] = useState<DOMRect | null>(null);
+  const { show, hide } = useTooltipTimer(rect, setRect);
+
+  if (disabled) return children;
 
   const child = cloneElement(children, {
     onPointerEnter: (e: React.PointerEvent) => {

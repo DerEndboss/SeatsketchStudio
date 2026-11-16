@@ -13,9 +13,6 @@ const FIELD =
 function useCommitField(display: string, onCommit: (text: string) => boolean) {
   const [text, setText] = useState(display);
   const [editing, setEditing] = useState(false);
-  useEffect(() => {
-    if (!editing) setText(display);
-  }, [display, editing]);
   return {
     value: editing ? text : display,
     onFocus: (e: React.FocusEvent<HTMLInputElement>) => {
