@@ -131,3 +131,6 @@ downloads. The full procedure is in [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md)
   a native Windows run has to be verified separately. Downloads are not signed.
 - The known minimatch advisory cascade affects the electron-builder toolchain, which is not
   shipped. No blind `npm audit fix --force` (npm proposes an old builder as a downgrade).
+  The same goes for the picomatch ReDoS advisory (GHSA-fc5q-39xc-vjpf, no patched release yet):
+  it only reaches Vite, Vitest, typescript-eslint and the builder, with glob patterns from our
+  own configuration.
